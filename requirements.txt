@@ -1,0 +1,2 @@
+torch
+gym-pybullet-drones @ git+https://github.com/learnsyslab/gym-pybullet-drones.git
