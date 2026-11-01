@@ -17,6 +17,14 @@ A custom environment, `Hover1DEnv`, was developed using Gymnasium to model simpl
 
 The agent learns to regulate thrust based on its observed altitude error and vertical velocity, with the objective of maintaining a stable hover at a specified height.
 
+Model before training:
+<img width="640" height="480" alt="DroneRL_beforetraining" src="https://github.com/user-attachments/assets/daf15941-22ad-4633-aace-c9538060449a" />
+
+Model after training:
+<img width="640" height="480" alt="DroneRL_aftertraining" src="https://github.com/user-attachments/assets/573f6e75-7d64-451a-80a9-0fa75fad5ab7" />
+
+
+
 ### Simulation Parameters
 
 | Parameter | Value |
@@ -166,22 +174,6 @@ The custom environment can be checked for compatibility with Stable-Baselines3 u
 ```bash
 python check.py
 ```
-
-## Development Roadmap
-
-This project is under active development. Planned milestones include:
-
-- [x] Develop a custom 1D vertical flight simulation
-- [x] Implement PPO-based reinforcement learning
-- [x] Introduce randomized initial conditions, physical parameters, and sensor noise
-- [x] Implement controller evaluation and altitude response visualization
-- [ ] Refine the reward function and quantify controller performance
-- [ ] Expand the simulation to additional degrees of freedom
-- [ ] Introduce attitude control and more complete quadcopter dynamics
-- [ ] Develop autonomous navigation capabilities for indoor environments
-- [ ] Incorporate obstacle detection and avoidance
-- [ ] Investigate deployment of trained policies on ESP32-S3 hardware
-- [ ] Test and validate the controller on a physical drone
 
 ## Long-Term Objective
 
