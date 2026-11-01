@@ -9,13 +9,15 @@ class Hover1DEnv(gym.Env):
         super().__init__()
         # Physical constants
         # sized (roughly) for irl drone and Crazyfile
-        self.mass = 0.03        # kg
+        self.nom_mass = 0.03        # kg
         self.gravity = 9.81     # m/s^2
         self.dt = 0.02          # s per step (~50 Hz)
-        self.max_thrust = 2 * self.mass * self.gravity # lifts about 2x its weight
+        self.max_thrust = 2 * self.nom_mass * self.gravity # lifts about 2x its weight
         self.target_z = 1.0     # m
         self.max_steps = 500    # 10 sec episodes
         self.abonus = 1.0       # added bonus for staying alive
+        self.z_noise_std = 0.005 # 5 mm
+        self.vz_noise_std = 0.03 # 3 cm/s
 
         self.action_space = spaces.Box(low= -1.0, high= 1.0, shape= (1,), dtype= np.float32)
         # what it can do/outputs (driving terms like steering/gas/break)
@@ -27,6 +29,9 @@ class Hover1DEnv(gym.Env):
         super().reset(seed=seed)
         self.z = self.np_random.uniform(0.2, 1.8) # random start height (meters)
         self.vz = self.np_random.uniform(-0.5, 0.5) # random start velocity (m/s)
+        self.mass = self.np_random.uniform(0.024,0.036)
+        weight = self.nom_mass * self.gravity
+        self.disturbance = self.np_random.uniform(-0.1 * weight, 0.1 * weight)
         self.steps = 0
         return self._get_obs(), {}
 
@@ -37,7 +42,7 @@ class Hover1DEnv(gym.Env):
         # mapping [-1,1] tp [0, 1] to [0, max thrust]
         thrust = (a + 1) / 2*self.max_thrust
 
-        acc = thrust / self.mass - self.gravity # net accel
+        acc = (thrust + self.disturbance) / self.mass - self.gravity # net accel
         self.vz = self.vz + acc * self.dt # velocity
         self.z = self.z + self.vz * self.dt # position
 
@@ -53,4 +58,6 @@ class Hover1DEnv(gym.Env):
         return self._get_obs(), reward, terminated,truncated, {}
 
     def _get_obs(self):
-        return np.array([self.z - self.target_z, self.vz], dtype=np.float32)
+        zError_meas = (self.z - self.target_z) + self.np_random.normal(0.0, self.z_noise_std)
+        vz_meas = (self.vz) + self.np_random.normal(0.0, self.vz_noise_std)
+        return np.array([zError_meas, vz_meas], dtype=np.float32)
