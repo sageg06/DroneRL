@@ -1,10 +1,11 @@
+import os
 import matplotlib.pyplot as plt
 from envs.hover1d_env import Hover1DEnv
 from datetime import datetime
 from stable_baselines3 import PPO
 import numpy as np
 
-
+os.makedirs("plots", exist_ok=True)
 model = PPO.load("hover1d_rev2_ppo.zip")
 stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 env = Hover1DEnv()
@@ -15,7 +16,6 @@ env.disturbance = -0.029
 heights = [env.z]
 total_reward = 0
 times = [0.0]
-offset = np.mean(heights[250:]) - env.target_z
 
 for step_number in range(1, 501):
     action, _ = model.predict(obs, deterministic=True)
@@ -27,6 +27,7 @@ for step_number in range(1, 501):
 
     if terminated or truncated:
         break
+offset = np.mean(heights[250:]) - env.target_z
 env.close()
 print(f"Lasted {env.steps} steps ({times[-1]:.2f} sec), total score: {total_reward:.1f}")
 print(f"Steady state offset: {offset * 1000:.1f} mm")
