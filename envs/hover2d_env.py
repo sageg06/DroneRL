@@ -74,6 +74,7 @@ class Hover2DEnv(gym.Env):
         right_thrust = (aR + 1) / 2*(self.max_thrust/2)
         total_thrust = (left_thrust + right_thrust)
         torque = self.arm_length * (right_thrust - left_thrust)
+        # theta > 0 means RIGHT SIDE UP TILTED TOWARDS -y DO NOT FORGET!!!!!
 
         # Acceleration calculations
         a_y = (-total_thrust * np.sin(self.theta)) / self.mass
